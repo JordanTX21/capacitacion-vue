@@ -1,56 +1,61 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCounterStore } from '@/stores/counter'
 
 const store = useCounterStore()
-const { count, input, doubleCount, countArray } = storeToRefs(store)
-const { tripleCount } = store
+const { projects } = storeToRefs(store)
 
-const html = ref(`<strong>Hola html</strong>`)
+onMounted(() => {
+  store.listProjects()
+})
+
+onBeforeUnmount(() => {
+  alert("Espera!")
+})
 
 </script>
 
 <template>
   <main>
-
-    <br>
-    <div>Count * 2: {{ doubleCount }}</div>
-
-    <br>
-    <div>Count * 3: {{ tripleCount() }}</div>
-
-    <form class="grid gap-y-4 p-4" @submit.prevent="store.save()">
-      <div class="max-w-sm space-y-3">
-        <input type="text" v-model="input"
-          class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none border"
-          placeholder="This is placeholder">
+    <div class="flex flex-col">
+      <div class="-m-1.5 overflow-x-auto">
+        <div class="p-1.5 min-w-full inline-block align-middle">
+          <div class="overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+              <thead>
+                <tr>
+                  <th scope="col"
+                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">ID
+                  </th>
+                  <th scope="col"
+                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Name
+                  </th>
+                  <th scope="col"
+                    class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">
+                    Description</th>
+                  <th scope="col"
+                    class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+                <tr v-for="(item, index) in projects">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">John
+                    {{ item.id }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ item.name }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{
+                    item.description }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{{ item.status }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="max-w-sm space-y-3">
-        <button type="submit" class="border border-red-600 text-red-600 rounded p-2 cursor-pointer">Guardar</button>
-      </div>
-    </form>
-
-    <div class="text-5xl">{{ input }}</div>
-
-    <div>
-      <h1 class="text-[#2cdb5b]">Hola mundo!</h1>
-      <div v-html="html"></div>
-      <div v-text="html"></div>
-      <div>{{ html }}</div>
-      <br>
-      <br>
-      <div>Count: {{ count }}</div>
-      <br>
-      <div v-if="count > 3">Es mayor a 3</div>
-      <!-- <div v-else-if="count == 0">Es 0</div>
-    <div v-else>Otro caso</div> -->
-      <div v-show="count > 3">Show now</div>
-      <br>
-      <div>Lista:</div>
-      <div v-for="(item, index) in countArray">{{ item }}</div>
-      <button class="border border-red-600 rounded p-2 cursor-pointer" @click="store.increment()">Increment</button>
-      <button class="border border-red-600 rounded p-2 cursor-pointer" @click="store.decrement()">Decrement</button>
     </div>
   </main>
 </template>
